@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Middleware\AuthenticateUser;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,3 +17,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('login', [AuthController::class, 'login']);
 Route::post('register', [AuthController::class, 'register']);
+Route::middleware([AuthenticateUser::class])->group(function () {
+    Route::get('self', [AuthController::class, 'self']);
+    Route::get('logout', [AuthController::class, 'logout']);
+});

@@ -32,6 +32,15 @@ class AuthController extends Controller
         return $this->authRepository->add($inputs);
     }
 
+    public function self(Request $request): JsonResponse
+    {
+        return $this->authRepository->self($request);
+    }
+
+    public function logout()
+    {
+    }
+
     private function getInput($request): array
     {
         return array_replace_recursive(

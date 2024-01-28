@@ -7,8 +7,10 @@ use App\Models\Token;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class AuthRepository
 {
@@ -124,5 +126,50 @@ class AuthRepository
         } finally {
             DB::rollback();
         }
+    }
+
+    public function self(Request $request): JsonResponse
+    {
+        $token = $this->getBearerToken($request);
+        $token = Token::where('token', $token)->first();
+        if ($token && $token->id) {
+            $userData = $this->user::where('id', $token->user_id)
+                ->where('status', 'ACTIVE')
+                ->first();
+//            $userData = $this->user::with('files')->where('id', $token->user_id)->where('status', 'ACTIVE')->first();
+            if ($userData->id) {
+                $response = response()->json([
+                    "status" => "success",
+                    "message" => "User logged in",
+                    "data" => [
+                        'id' => $userData->id,
+                        'name' => $userData->name,
+                        'username' => $userData->username,
+                        'email' => $userData->email,
+                        'contact' => $userData->contact,
+                    ],
+                ], 200);
+            } else {
+                $response = response()->json([
+                    "error" => "User not found",
+                    "errorDetails" => "User not found",
+                    "type" => "RESOURCE_NOT_FOUND"
+                ], 404);
+            }
+        } else {
+            $response = response()->json([
+                "error" => "Token not found",
+                "errorDetails" => "Token not found",
+                "type" => "RESOURCE_NOT_FOUND"
+            ], 401);
+        }
+
+        return $response;
+    }
+
+    public function getBearerToken($request): bool|string
+    {
+        $header = $request->header('Authorization', '');
+        return (Str::startsWith($header, 'Bearer ')) ? Str::substr($header, 7) : false;
     }
 }
