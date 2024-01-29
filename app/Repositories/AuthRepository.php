@@ -2,15 +2,18 @@
 
 namespace App\Repositories;
 
+use App\Exceptions\ServiceException;
 use App\Http\StatusCodes;
 use App\Models\Token;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 class AuthRepository
 {
@@ -136,7 +139,7 @@ class AuthRepository
             $userData = $this->user::where('id', $token->user_id)
                 ->where('status', 'ACTIVE')
                 ->first();
-//            $userData = $this->user::with('files')->where('id', $token->user_id)->where('status', 'ACTIVE')->first();
+
             if ($userData->id) {
                 $response = response()->json([
                     "status" => "success",
@@ -157,11 +160,7 @@ class AuthRepository
                 ], 404);
             }
         } else {
-            $response = response()->json([
-                "error" => "Token not found",
-                "errorDetails" => "Token not found",
-                "type" => "RESOURCE_NOT_FOUND"
-            ], 401);
+            throw new ServiceException('Token is invalid', ResponseAlias::HTTP_BAD_REQUEST);
         }
 
         return $response;
