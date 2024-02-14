@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\RoleController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\AuthenticateUser;
 
@@ -17,7 +19,17 @@ use App\Http\Middleware\AuthenticateUser;
 
 Route::post('login', [AuthController::class, 'login']);
 Route::post('register', [AuthController::class, 'register']);
+
+
+
+Route::post('createRole', [RoleController::class, 'createRole']);
+Route::post('createDepartment', [DepartmentController::class,'createDepartment']);
+
+
 Route::middleware([AuthenticateUser::class])->group(function () {
-    Route::get('self', [AuthController::class, 'self']);
-    Route::get('logout', [AuthController::class, 'logout']);
+Route::get('self', [AuthController::class, 'self']);
+Route::get('logout', [AuthController::class, 'logout']);
+
+
+
 });
