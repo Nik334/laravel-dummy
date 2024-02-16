@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('department_name');
             $table->enum('status', array('ACTIVE', 'INACTIVE'));
-            $table->unsignedBigInteger('added_by');
+            $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users');
             $table->timestamp('added_on');
             $table->timestamps();
