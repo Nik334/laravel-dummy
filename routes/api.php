@@ -21,9 +21,14 @@ Route::post('login', [AuthController::class, 'login']);
 Route::post('register', [AuthController::class, 'register']);
 
 
-
+//role
 Route::post('createRole', [RoleController::class, 'createRole']);
+Route::post('getRole', [RoleController::class, 'getRole']);
+Route::post('updateRole', [RoleController::class, 'updateRole']);
+
+//department
 Route::post('createDepartment', [DepartmentController::class,'createDepartment']);
+Route::post('getDepartment', [DepartmentController::class,'getDepartment']);
 
 
 Route::middleware([AuthenticateUser::class])->group(function () {
