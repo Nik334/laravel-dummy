@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\DesignationController;
 use App\Http\Controllers\RoleController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\AuthenticateUser;
@@ -29,6 +30,10 @@ Route::post('updateRole', [RoleController::class, 'updateRole']);
 //department
 Route::post('createDepartment', [DepartmentController::class,'createDepartment']);
 Route::post('getDepartment', [DepartmentController::class,'getDepartment']);
+Route::post('updateDepartment',[DepartmentController::class,'updateDepartment']);
+
+Route::post('createDesignation',[DesignationController::class,'createDesignation']);
+Route::post('getDesignation',[DesignationController::class,'getDesignation']);
 
 
 Route::middleware([AuthenticateUser::class])->group(function () {
