@@ -54,11 +54,11 @@ class DepartmentRepository
     }
 
 
-    public function get($status, $generalSearch, $iDisplayStart, $iDisplayEnd, $sortOrder)
+    public function get($status, $generalSearch, $iDisplayStart, $iDisplayLength, $sortOrder)
     {
         $roleQuery = DB::table('department as d')->select('d.*', 'u.user_name as added_by_name')->join('users as u', 'u.id', '=', 'd.added_by');
 
-        if ($status !== "") {
+        if ($status !== null && $status !== "") {
             $roleQuery->where('d.status', $status);
         }
 
@@ -68,10 +68,22 @@ class DepartmentRepository
                     ->orWhere('u.user_name', 'like', '%' . $generalSearch . '%');
             });
         }
+
         if ($sortOrder !== "") {
+
+            if ($sortOrder === 'asc') {
+                $roleQuery->orderBy('d.department_name', 'ASC');
+            } elseif ($sortOrder === 'desc') {
+                $roleQuery->orderBy('d.department_name', 'DESC');
+            }
         } else {
-            $roleQuery->orderBy('r.department_name', 'ASC');
+
+            $roleQuery->orderBy('d.department_name', 'ASC');
         }
+        if ($iDisplayLength !== null && $iDisplayLength !== -1) {
+            $roleQuery->skip($iDisplayStart)->take($iDisplayLength);
+        }
+      
         $recordResult = $roleQuery->get();
         // $recordResult = $roleQuery->offset($iDisplayStart)->limit($iDisplayEnd)-get();
         $return = [];

@@ -40,7 +40,7 @@ class RoleController extends Controller
         $generalSearch = $request->input("generalSearch");
         $sortOrder = $request->input("sortOrder");
         $iDisplayStart = $request->input("iDisplayStart");
-        $iDisplayEnd = $request->input("iDisplayEnd");
+        $iDisplayLength = $request->input("iDisplayLength");
 
         $response = [
             "error"=>false,
@@ -49,13 +49,14 @@ class RoleController extends Controller
             "message"=>"Role"
         ];
 
-        $return = $this->roleRepository->get($status, $generalSearch,$iDisplayStart,$iDisplayEnd,$sortOrder);
+        $return = $this->roleRepository->get($status, $generalSearch,$iDisplayStart,$iDisplayLength,$sortOrder);
         if ($return["error"]==false) {
             $response = [
                 "message"=>"Role",
                 "error"=>false,
                 "data" =>$return["data"],
-                "totalCount" => $return["totalCount"]
+                "totalCount" => $return["totalCount"],
+                "query" =>$return["query"]
             ];
         } else {
             $response = [

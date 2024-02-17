@@ -18,17 +18,17 @@ class DepartmentController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-     protected $departmentRepository;
-     public function __construct(DepartmentRepository $departmentRepository)
-     {
-         $this->departmentRepository = $departmentRepository;
-     }
+    protected $departmentRepository;
+    public function __construct(DepartmentRepository $departmentRepository)
+    {
+        $this->departmentRepository = $departmentRepository;
+    }
     public function createDepartment(Request $request)
     {
         $userID = $request->input('userID');
         $departmentName = $request->input('departmentName');
 
-       
+
         $response = $this->departmentRepository->add($departmentName, $userID);
 
         if ($response) {
@@ -44,39 +44,40 @@ class DepartmentController extends Controller
         }
     }
 
-    public function getDepartment(Request $request){
+    public function getDepartment(Request $request)
+    {
 
         $status = $request->input("status");
         $generalSearch = $request->input('generalSearch');
         $sortOrder = $request->input("sortOrder");
         $iDisplayStart = $request->input("iDisplayStart");
-        $iDisplayEnd = $request->input("iDisplayEnd");
+        $iDisplayLength = $request->input("iDisplayLength");
 
         $response = [
-            "error"=>false,
-            "data" =>[],
-            "totalCount" =>0,
-            "message"=>"Role"
+            "error" => false,
+            "data" => [],
+            "totalCount" => 0,
+            "message" => "Role"
         ];
 
-        $return = $this->departmentRepository->get($status, $generalSearch,$iDisplayStart,$iDisplayEnd,$sortOrder);
-        if ($return["error"]==false) {
+        $return = $this->departmentRepository->get($status, $generalSearch, $iDisplayStart, $iDisplayLength, $sortOrder);
+        if ($return["error"] == false) {
             $response = [
-                "message"=>"Department",
-                "error"=>false,
-                "data" =>$return["data"],
-                "totalCount" => $return["totalCount"]
+                "message" => "Department",
+                "error" => false,
+                "data" => $return["data"],
+                "totalCount" => $return["totalCount"],
+                "query" => $return["query"]
             ];
         } else {
             $response = [
-                "error"=>true,
-                "data" =>"No Data Found",
-                
+                "error" => true,
+                "data" => "No Data Found",
+
             ];
         }
 
         return response()->json($response, 201);
-
     }
     public function updateDepartment(Request $request)
     {
@@ -84,30 +85,23 @@ class DepartmentController extends Controller
         $departmentName = $request->input('departmentName');
         $departmentID = $request->input('departmentID');
         $status  = $request->input('status');
-        $response = ['error'=> false,'message'=>"Updated successfully"];
-        try {
+        $response = [
+            'error' => false,
+            'message' => "Updated successfully"
+        ];
 
-            $departmentResult = DB::table('department')
-                ->where('department_name', $departmentName)->where('id', '!=', $departmentID)
-                ->get();
+        $response = $this->departmentRepository->updated($departmentID, $departmentName, $status);
 
-            if ($departmentResult->isNotEmpty()) {
-                $response['message'] = 'Department already present';
-                $response['error'] = true;
-            } else {
-                DB::table('department')->where('id', '=', $departmentID)->update([
-                    'department_name' => $departmentName,
-                    'status' => $status,
-                ]);
-            }
-        } catch (PDOException $e) {
-            $response['message'] = 'Failed to create department' . $e;
-            $response['error'] = true;
-            DB::rollback();
+        if ($response) {
+            return response()->json($response, 201);
+        } else {
+            return response()->json(
+                [
+                    "error" => true,
+                    "message" => "something went wrong"
+                ],
+                400
+            );
         }
-
-        return response()->json($response, 200);
     }
-
-   
 }
