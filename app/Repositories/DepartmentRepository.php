@@ -37,6 +37,7 @@ class DepartmentRepository
                     'status' => 'ACTIVE',
                     'added_by' => $userID,
                     'added_on' => now(),
+                    'user_id' => $userID
                 ]);
 
                 DB::commit();
@@ -45,7 +46,7 @@ class DepartmentRepository
                 $return['error'] = false;
             }
         } catch (PDOException $e) {
-            $return['message'] = 'Failed to create department';
+            $return['message'] = $e;
             $return['error'] = true;
             DB::rollback();
         }
@@ -83,7 +84,7 @@ class DepartmentRepository
         if ($iDisplayLength !== null && $iDisplayLength !== -1) {
             $roleQuery->skip($iDisplayStart)->take($iDisplayLength);
         }
-      
+
         $recordResult = $roleQuery->get();
         // $recordResult = $roleQuery->offset($iDisplayStart)->limit($iDisplayEnd)-get();
         $return = [];

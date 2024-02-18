@@ -28,8 +28,8 @@ Route::post('getRole', [RoleController::class, 'getRole']);
 Route::post('updateRole', [RoleController::class, 'updateRole']);
 
 //department
-Route::post('createDepartment', [DepartmentController::class,'createDepartment']);
-Route::post('getDepartment', [DepartmentController::class,'getDepartment']);
+Route::post('department', [DepartmentController::class,'createDepartment']);
+Route::get('department', [DepartmentController::class,'getDepartment']);
 Route::post('updateDepartment',[DepartmentController::class,'updateDepartment']);
 
 Route::post('createDesignation',[DesignationController::class,'createDesignation']);
